@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" 
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+		http://www.springframework.org/schema/jdbc 
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd 
+		http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- dataSource's configuration and settings for H2SQL In Memory -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
+		<jdbc:script location="classpath:h2script/jspforum-h2-schema.sql" />
+		<jdbc:script location="classpath:h2script/jspforum-h2-dataloading.sql" />
+		<jdbc:script location="classpath:h2script/jspforum-h2-spring-security-schema.sql" />
+		<jdbc:script location="classpath:h2script/jspforum-h2-spring-security-dataloading.sql" />
+	</jdbc:initialize-database>
+	<!--<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
+		<jdbc:script location="classpath:mysqlscript/jspforum-mysql-schema.sql" />
+		<jdbc:script location="classpath:mysqlscript/jspforum-mysql-dataloading.sql" />
+		<jdbc:script location="classpath:mysqlscript/jspforum-mysql-spring-security-schema.sql" />
+		<jdbc:script location="classpath:mysqlscript/jspforum-mysql-spring-security-dataloading.sql" />
+	</jdbc:initialize-database>-->
+	<!-- ============================================ -->
+	<!-- Spring Integration with Hibernate Annotation -->
+	<!-- ============================================ -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" 
+		p:configurationClass="org.hibernate.cfg.AnnotationConfiguration">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+				<prop key="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</prop>
+				<prop key="hibernate.query.factory_class">org.hibernate.hql.classic.ClassicQueryTranslatorFactory</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="hibernate.cglib.use_reflection_optimizer">false</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+			</props>
+		</property>
+		<property name="annotatedClasses">
+			<list>
+				<value>com.wiz.jspforum.persistence.basic.data.dto.FriendJointRequest</value>
+				<value>com.wiz.jspforum.persistence.basic.data.dto.FriendLink</value>
+				<value>com.wiz.jspforum.persistence.basic.data.dto.PostComment</value>
+				<value>com.wiz.jspforum.persistence.basic.data.dto.PostWithComment</value>
+				<value>com.wiz.jspforum.persistence.basic.data.dto.UserMessage</value>
+				<value>com.wiz.jspforum.persistence.basic.data.dto.UserPost</value>
+				<value>com.wiz.jspforum.persistence.basic.data.dto.UserProfile</value>
+			</list>
+		</property>
+	</bean>
+	<!-- Transaction manager for the Hibernate SessionFactory -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- Allow declarative transaction management using the @Transactional annotation -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- Auto-detect components for DAOs -->
+	<context:component-scan base-package="com.wiz.jspforum.persistence.basic.data.daoImpl.hibernate" />
+	<!-- Auto-detect components for BDOs -->
+	<context:component-scan base-package="com.wiz.jspforum.bizservice.logic.basic.bdoImpl" />
+	<!-- Apply persistence exception translation on @Repository classes -->
+	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+	
+</beans>

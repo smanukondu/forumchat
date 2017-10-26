@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.wiz.jspforum.persistence.basic.data.dto">
+	<class name="PostComment" table="FORUM_POST_COMMENT" lazy="false">
+		<cache usage="read-write"/>
+		<id name="postCommentId" type="java.lang.Integer" column="POST_COMMENT_ID">
+			<generator class="native"/>
+		</id>
+		<property name="postCommentContent" type="java.lang.String" column="POST_COMMENT_CONTENT"/>
+		<property name="postCommentDate" column="POST_COMMENT_DATE"/>
+		<property name="postCommentMark" type="java.lang.Integer" column="POST_COMMENT_MARK"/>
+		<many-to-one name="postCommentPost" class="UserPost" fetch="select">
+			<column name="POST_COMMENT_POST_ID" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="postCommentUser" class="UserProfile" fetch="select">
+			<column name="POST_COMMENT_USER_ID" not-null="true"/>
+		</many-to-one>
+	</class>
+</hibernate-mapping>

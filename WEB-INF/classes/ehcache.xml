@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+	<diskStore path="java.io.tmpdir/ehcache/jspforum-mvc" />
+	<defaultCache maxElementsInMemory="10000" 
+        eternal="false" 
+        timeToIdleSeconds="120" 
+        timeToLiveSeconds="120" 
+        overflowToDisk="true" 
+        />
+	<cache name="com.wiz.jspforum.persistence.basic.data.dto.FriendJointRequest" 
+        maxElementsInMemory="1" 
+        eternal="false" 
+        timeToIdleSeconds="300" 
+        timeToLiveSeconds="600" 
+        overflowToDisk="true" 
+        />
+	<cache name="com.wiz.jspforum.persistence.basic.data.dto.FriendLink" 
+        maxElementsInMemory="1" 
+        eternal="false" 
+        timeToIdleSeconds="300" 
+        timeToLiveSeconds="600" 
+        overflowToDisk="true" 
+        />
+	<cache name="com.wiz.jspforum.persistence.basic.data.dto.PostComment" 
+        maxElementsInMemory="1" 
+        eternal="false" 
+        timeToIdleSeconds="300" 
+        timeToLiveSeconds="600" 
+        overflowToDisk="true" 
+        />
+	<cache name="com.wiz.jspforum.persistence.basic.data.dto.UserMessage" 
+        maxElementsInMemory="1" 
+        eternal="false" 
+        timeToIdleSeconds="300" 
+        timeToLiveSeconds="600" 
+        overflowToDisk="true" 
+        />
+	<cache name="com.wiz.jspforum.persistence.basic.data.dto.UserPost" 
+        maxElementsInMemory="1" 
+        eternal="false" 
+        timeToIdleSeconds="300" 
+        timeToLiveSeconds="600" 
+        overflowToDisk="true" 
+        />
+	<cache name="com.wiz.jspforum.persistence.basic.data.dto.UserProfile" 
+        maxElementsInMemory="1" 
+        eternal="false" 
+        timeToIdleSeconds="300" 
+        timeToLiveSeconds="600" 
+        overflowToDisk="true" 
+        />
+		
+</ehcache>

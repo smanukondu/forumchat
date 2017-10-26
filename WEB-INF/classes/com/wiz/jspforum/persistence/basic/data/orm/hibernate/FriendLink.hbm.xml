@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.wiz.jspforum.persistence.basic.data.dto">
+	<class name="FriendLink" table="FORUM_FRIEND_LINK" lazy="false">
+		<cache usage="read-write" />
+		<id name="friendLinkId" type="java.lang.Integer" column="FRIEND_LINK_ID">
+			<generator class="native"/>
+		</id>
+		<many-to-one name="friendLinkHostUser" class="UserProfile" fetch="select">
+			<column name="FRIEND_LINK_HOST_USER_ID" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="friendLinkCustUser" class="UserProfile" fetch="select">
+			<column name="FRIEND_LINK_CUST_USER_ID" not-null="true"/>
+		</many-to-one>
+		<property name="friendLinkMappedDate" column="FRIEND_LINK_MAP_DATE"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiz.jspforum.persistence.basic.data.myBatis.mapper.UserMapper">
+	<resultMap id="detailedUserProfileResultMap" type="UserProfile">
+		<id property="userId" column="userId"/>
+		<result property="userName" column="userName"/>
+		<result property="userPassword" column="userPassword"/>
+		<result property="userAlias" column="userAlias"/>
+		<result property="userEmail" column="userEmail"/>
+		<result property="userType" column="userType"/>
+		<result property="userLevel" column="userLevel"/>
+		<result property="userSignature" column="userSignature"/>
+		<result property="userAvatarPic" column="userAvatarPic"/>
+		<result property="userRegisterDate" column="userRegisterDate"/>
+		<result property="userLoginStatus" column="userLoginStatus"/>
+	</resultMap>
+	<sql id="userProfileColumns">
+		<![CDATA[
+			USER_ID as userId, 
+			USER_NAME as userName, 
+			USER_PASSWORD as userPassword, 
+			USER_ALIAS as userAlias, 
+			USER_EMAIL as userEmail, 
+			USER_TYPE as userType, 
+			USER_LEVEL as userLevel, 
+			USER_SIGNATURE as userSignature, 
+			USER_AVATAR_PIC as userAvatarPic, 
+			USER_REGISTER_DATE as userRegisterDate, 
+			USER_LOGIN_STATUS as userLoginStatus 
+		]]>
+	</sql>
+	<select id="getUserProfileRecordByUserName" parameterType="string" resultMap="detailedUserProfileResultMap">
+		<![CDATA[
+			select
+		]]>
+			<include refid="userProfileColumns"/>
+		<![CDATA[
+			from 
+				FORUM_USER_PROFILE 
+			where 
+				USER_NAME = #{username}
+		]]>
+	</select>
+	<insert id="insertUserProfileRecord" parameterType="UserProfile">
+		<![CDATA[
+			insert into FORUM_USER_PROFILE 
+				(USER_NAME, 
+				 USER_PASSWORD, 
+				 USER_ALIAS, 
+				 USER_EMAIL, 
+				 USER_TYPE, 
+				 USER_LEVEL, 
+				 USER_SIGNATURE, 
+				 USER_AVATAR_PIC, 
+				 USER_REGISTER_DATE, 
+				 USER_LOGIN_STATUS) 
+			values 
+				(#{userName}, 
+				 #{userPassword}, 
+				 #{userAlias}, 
+				 #{userEmail}, 
+				 #{userType}, 
+				 #{userLevel}, 
+				 #{userSignature}, 
+				 #{userAvatarPic}, 
+				 CURRENT_TIMESTAMP, 
+				 #{userLoginStatus})
+		]]>
+	</insert>
+	<select id="getUserProfileRecordByUserId" parameterType="int" resultMap="detailedUserProfileResultMap">
+		<![CDATA[
+			select
+		]]>
+			<include refid="userProfileColumns"/>
+		<![CDATA[
+			from 
+				FORUM_USER_PROFILE 
+			where 
+				USER_ID = #{userId}
+		]]>
+	</select>
+	<update id="updateUserProfileRecord" parameterType="UserProfile">
+		<![CDATA[
+			update FORUM_USER_PROFILE set 
+				USER_NAME = #{userName}, 
+				USER_PASSWORD = #{userPassword}, 
+				USER_ALIAS = #{userAlias}, 
+				USER_EMAIL = #{userEmail}, 
+				USER_SIGNATURE = #{userSignature}, 
+				USER_AVATAR_PIC = #{userAvatarPic} 
+			where 
+				USER_ID = #{userId}
+		]]>
+	</update>
+	<select id="selectEncryptedPasswordFromBatis" parameterType="string" resultType="string">
+		<![CDATA[
+			select password(#{password}) from dual
+		]]>
+	</select>
+	<update id="updateLoginStatusOfUserProfileRecord" parameterType="UserProfile">
+		<![CDATA[
+			update FORUM_USER_PROFILE set 
+				USER_LOGIN_STATUS = #{userLoginStatus} 
+			where 
+				USER_ID = #{userId}
+		]]>
+	</update>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.wiz.jspforum.persistence.basic.data.dto">
+	<class name="UserMessage" table="FORUM_MESSAGE" lazy="false">
+		<cache usage="read-write"/>
+		<id name="messageId" type="java.lang.Integer" column="MESSAGE_ID">
+			<generator class="native"/>
+		</id>
+		<property name="messageContent" type="java.lang.String" column="MESSAGE_CONTENT"/>
+		<property name="messageTime" column="MESSAGE_TIME"/>
+		<property name="messageReadFlag" type="java.lang.Integer" column="MESSAGE_READ_FLAG"/>
+		<many-to-one name="messageDestUser" class="UserProfile" fetch="select">
+			<column name="MESSAGE_DESTINATION_USER_ID" not-null="true"/>
+		</many-to-one>
+		<many-to-one name="messageSourceUser" class="UserProfile" fetch="select">
+			<column name="MESSAGE_SOURCE_USER_ID" not-null="true"/>
+		</many-to-one>
+	</class>
+</hibernate-mapping>

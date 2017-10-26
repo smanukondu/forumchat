@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="WebTemplate01" template="/jsp/template/MasterPageTemplate_01.jsp">
+		<put-attribute name="PageTitle"   value="PageTitle" />
+		<put-attribute name="LeftMenuBar" value="LeftMenuBar" />
+		<put-attribute name="BodyContent" value="BodyContent" />
+	</definition>
+	<definition name="WebTemplate02" template="/jsp/template/MasterPageTemplate_02.jsp">
+		<put-attribute name="PageTitle"    value="PageTitle" />
+		<put-attribute name="PageHeader"   value="PageHeader" />
+		<put-attribute name="LeftMenuBar"  value="LeftMenuBar" />
+		<put-attribute name="BodyContent"  value="BodyContent" />
+		<put-attribute name="RightMenuBar" value="RightMenuBar" />
+	</definition>
+	<definition name="user/default/loginform" extends="WebTemplate01">
+		<put-attribute name="PageTitle"   value="jspforum.com - User Login Page" />
+		<put-attribute name="LeftMenuBar" value="/jsp/default/loginFormLeftMenuBar.jsp" />
+		<put-attribute name="BodyContent" value="/jsp/default/loginFormBodyContent.jsp" />
+	</definition>
+	<definition name="LOADED_INBOX_MESSAGES_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - User InBox Messages" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/messageInBoxBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/messageInBoxRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_MESSAGE_DETAIL_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Message Detail (Read Only)" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/messageDetailReadOnlyBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/messageDetailReadOnlyRightMenuBar.jsp" />
+	</definition>
+	<definition name="message/common/messageform" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Edit Message Detail for Replying" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/messageDetailReplyFormBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/messageDetailReplyFormRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_OUTBOX_MESSAGES_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - User OutBox Messages" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/messageOutBoxBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/messageOutBoxRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_MESSAGES_HISTORY_WITH_FRIEND_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Message History with Friend" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/friendMessageHistoryBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/friendMessageHistoryRightMenuBar.jsp" />
+	</definition>
+	<definition name="user/common/userprofileform" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - User Profile Update" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/userProfileUpdateFormBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/userProfileUpdateFormRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_POSTS_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Loaded Posts in the Forum" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/postZoneBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/postZoneRightMenuBar.jsp" />
+	</definition>
+	<definition name="post/common/userpostform" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Raise New Post" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/newPostFormBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/newPostFormRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_POST_DETAIL_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Post Detail (Read Only Mode)" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/postDetailReadOnlyBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/postDetailReadOnlyRightMenuBar.jsp" />
+	</definition>
+	<definition name="post/common/postcommentform" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Raise New Post" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/newPostCommentFormBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/newPostCommentFormRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_FRIEND_JOINT_REQUEST_LIST_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Friend Joint Request List" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/friendJointRequestOfUserBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/friendJointRequestOfUserRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_ALL_USER_FRIEND_LIST_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - All Freind List" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/friendListAllOfUserBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/friendListAllOfUserRightMenuBar.jsp" />
+	</definition>
+	<definition name="friend/common/friendjointrequestform" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Friend Joint Request Form" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/friendJointRequestFormBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/friendJointRequestFormRightMenuBar.jsp" />
+	</definition>
+	<definition name="friend/common/friendmessageform" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Send Message To Friend" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/sendMessageByFriendIdFormBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/sendMessageByFriendIdFormRightMenuBar.jsp" />
+	</definition>
+	<definition name="SEARCHED_POST_RECORD_RESULT_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Searched Result of Post in Forum" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/searchedResultForPostBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/searchedResultForPostRightMenuBar.jsp" />
+	</definition>
+	<definition name="user/default/userregisterform" extends="WebTemplate01">
+		<put-attribute name="PageTitle"   value="jspforum.com - Register New User Page" />
+		<put-attribute name="BodyContent" value="/jsp/default/registerNewUserFormBodyContent.jsp" />
+		<put-attribute name="LeftMenuBar" value="/jsp/default/registerNewUserFormLeftMenuBar.jsp" />
+	</definition>
+	<definition name="LOADED_FRIEND_PROFILE_DETAIL_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - Friend Profile Detail" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/friendProfileDetailBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/friendProfileDetailRightMenuBar.jsp" />
+	</definition>
+	<definition name="LOGIN_SECURITY_FORM_PAGE" extends="WebTemplate01">
+		<put-attribute name="PageTitle"   value="jspforum.com - Spring Security Login Page" />
+		<put-attribute name="LeftMenuBar" value="/jsp/common/loginPageLeftMenuBar.jsp" />
+		<put-attribute name="BodyContent" value="/jsp/common/loginPageBodyContent.jsp" />
+	</definition>
+	<definition name="SYSTEM_INTERNAL_ERROR_PAGE" extends="WebTemplate02">
+		<put-attribute name="PageTitle"    value="jspforum.com - System Internal Error" />
+		<put-attribute name="PageHeader"   value="/jsp/common/headerTitle.jsp" />
+		<put-attribute name="LeftMenuBar"  value="/jsp/common/leftMenuBar.jsp" />
+		<put-attribute name="BodyContent"  value="/jsp/common/systemErrorPageBodyContent.jsp" />
+		<put-attribute name="RightMenuBar" value="/jsp/common/systemErrorPageRightMenuBar.jsp" />
+	</definition>
+	
+</tiles-definitions>

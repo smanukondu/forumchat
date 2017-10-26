@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiz.jspforum.persistence.basic.data.myBatis.mapper.MessageMapper">
+	<sql id="userMessageColumns">
+		<![CDATA[
+			a.MESSAGE_ID as messageId, 
+			a.MESSAGE_SOURCE_USER_ID, 
+			b.USER_ID as src_userId, 
+			b.USER_NAME as src_userName, 
+			b.USER_PASSWORD as src_userPassword, 
+			b.USER_ALIAS as src_userAlias, 
+			b.USER_EMAIL as src_userEmail, 
+			b.USER_TYPE as src_userType, 
+			b.USER_LEVEL as src_userLevel, 
+			b.USER_SIGNATURE as src_userSignature, 
+			b.USER_AVATAR_PIC as src_userAvatarPic, 
+			b.USER_REGISTER_DATE as src_userRegisterDate, 
+			b.USER_LOGIN_STATUS as src_userLoginStatus, 
+			a.MESSAGE_DESTINATION_USER_ID, 
+			c.USER_ID as dest_userId, 
+			c.USER_NAME as dest_userName, 
+			c.USER_PASSWORD as dest_userPassword, 
+			c.USER_ALIAS as dest_userAlias, 
+			c.USER_EMAIL as dest_userEmail, 
+			c.USER_TYPE as dest_userType, 
+			c.USER_LEVEL as dest_userLevel, 
+			c.USER_SIGNATURE as dest_userSignature, 
+			c.USER_AVATAR_PIC as dest_userAvatarPic, 
+			c.USER_REGISTER_DATE as dest_userRegisterDate, 
+			c.USER_LOGIN_STATUS as dest_userLoginStatus, 
+			a.MESSAGE_CONTENT as messageContent, 
+			a.MESSAGE_TIME as messageTime, 
+			a.MESSAGE_READ_FLAG as messageReadFlag 
+		]]>
+	</sql>
+	<resultMap id="detailedUserMessageResultMap" type="UserMessage">
+		<id property="messageId" column="messageId"/>
+		<result property="messageContent" column="messageContent"/>
+		<result property="messageTime" column="messageTime"/>
+		<result property="messageReadFlag" column="messageReadFlag"/>
+		<association property="messageSourceUser" 
+			resultMap="com.wiz.jspforum.persistence.basic.data.myBatis.mapper.UserMapper.detailedUserProfileResultMap" 
+			columnPrefix="src_"/>
+		<association property="messageDestUser" 
+			resultMap="com.wiz.jspforum.persistence.basic.data.myBatis.mapper.UserMapper.detailedUserProfileResultMap" 
+			columnPrefix="dest_"/>
+	</resultMap>
+	<select id="getUserMessageRecordByMessageId" parameterType="int" resultMap="detailedUserMessageResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userMessageColumns"/>
+		<![CDATA[
+			from 
+				FORUM_MESSAGE a 
+				inner join FORUM_USER_PROFILE b on a.MESSAGE_SOURCE_USER_ID = b.USER_ID 
+				inner join FORUM_USER_PROFILE c on a.MESSAGE_DESTINATION_USER_ID = c.USER_ID 
+			where 
+				a.MESSAGE_ID = #{messageId} 
+		]]>
+	</select>
+	<update id="updateUserMessageRecordForReadFlag" parameterType="UserMessage">
+		<![CDATA[
+			update FORUM_MESSAGE set 
+				MESSAGE_READ_FLAG = #{messageReadFlag} 
+			where 
+				MESSAGE_ID = #{messageId}
+		]]>
+	</update>
+	<insert id="insertUserMessageRecord" parameterType="UserMessage">
+		<![CDATA[
+			insert into FORUM_MESSAGE 
+				(MESSAGE_SOURCE_USER_ID, 
+				 MESSAGE_DESTINATION_USER_ID, 
+				 MESSAGE_CONTENT, 
+				 MESSAGE_TIME, 
+				 MESSAGE_READ_FLAG) 
+			values 
+				(#{messageSourceUser.userId}, 
+				 #{messageDestUser.userId}, 
+				 #{messageContent}, 
+				 CURRENT_TIMESTAMP, 
+				 #{messageReadFlag})
+		]]>
+	</insert>
+	<select id="getHistoryUserMessageRecordsBetweenFriendsOrderByMessageTimeDesc" resultMap="detailedUserMessageResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userMessageColumns"/>
+		<![CDATA[
+			from 
+				FORUM_MESSAGE a 
+				inner join FORUM_USER_PROFILE b on a.MESSAGE_SOURCE_USER_ID = b.USER_ID 
+				inner join FORUM_USER_PROFILE c on a.MESSAGE_DESTINATION_USER_ID = c.USER_ID 
+			where 
+				(a.MESSAGE_SOURCE_USER_ID = #{userId} and a.MESSAGE_DESTINATION_USER_ID = #{friendId}) or 
+				(a.MESSAGE_DESTINATION_USER_ID = #{userId} and a.MESSAGE_SOURCE_USER_ID = #{friendId})
+			order by a.MESSAGE_TIME desc
+		]]>
+	</select>
+	<select id="getUserMessageRecordsByDestUserIdOrderByMessageTimeDesc" parameterType="int" resultMap="detailedUserMessageResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userMessageColumns"/>
+		<![CDATA[
+			from 
+				FORUM_MESSAGE a 
+				inner join FORUM_USER_PROFILE b on a.MESSAGE_SOURCE_USER_ID = b.USER_ID 
+				inner join FORUM_USER_PROFILE c on a.MESSAGE_DESTINATION_USER_ID = c.USER_ID 
+			where 
+				a.MESSAGE_DESTINATION_USER_ID = #{destUserId} 
+			order by a.MESSAGE_TIME desc
+		]]>
+	</select>
+	<select id="getUserMessageRecordsBySourceUserIdOrderByMessageTimeDesc" parameterType="int" resultMap="detailedUserMessageResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userMessageColumns"/>
+		<![CDATA[
+			from 
+				FORUM_MESSAGE a 
+				inner join FORUM_USER_PROFILE b on a.MESSAGE_SOURCE_USER_ID = b.USER_ID 
+				inner join FORUM_USER_PROFILE c on a.MESSAGE_DESTINATION_USER_ID = c.USER_ID 
+			where 
+				a.MESSAGE_SOURCE_USER_ID = #{sourceUserId} 
+			order by a.MESSAGE_TIME desc
+		]]>
+	</select>
+	<select id="getUserMessageRecordsByUserIdWithReadFlagOrderByMessageTimeDesc" resultMap="detailedUserMessageResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userMessageColumns"/>
+		<![CDATA[
+			from 
+				FORUM_MESSAGE a 
+				inner join FORUM_USER_PROFILE b on a.MESSAGE_SOURCE_USER_ID = b.USER_ID 
+				inner join FORUM_USER_PROFILE c on a.MESSAGE_DESTINATION_USER_ID = c.USER_ID 
+			where 
+				a.MESSAGE_DESTINATION_USER_ID = #{userId} and 
+				a.MESSAGE_READ_FLAG = #{readFlag} 
+			order by a.MESSAGE_TIME desc
+		]]>
+	</select>
+	<select id="getUserMessageRecordsWithConditions" resultMap="detailedUserMessageResultMap">
+		<![CDATA[
+		select 
+		]]>
+		<include refid="userMessageColumns"/>
+		<![CDATA[
+		from 
+			FORUM_MESSAGE a 
+			inner join FORUM_USER_PROFILE b on a.MESSAGE_SOURCE_USER_ID = b.USER_ID 
+			inner join FORUM_USER_PROFILE c on a.MESSAGE_DESTINATION_USER_ID = c.USER_ID 
+		where 
+		]]>
+		<if test="isInBoxMessage == true">
+		<![CDATA[
+ 			a.MESSAGE_DESTINATION_USER_ID = #{user.userId} 
+ 		]]>
+		</if>
+		<if test="isInBoxMessage == false">
+		<![CDATA[
+ 			a.MESSAGE_SOURCE_USER_ID = #{user.userId} 
+ 		]]> 
+		</if>
+		<choose>
+			<when test="messageSearchForm.messageId != 0">
+			<![CDATA[
+				and a.MESSAGE_ID = #{messageSearchForm.messageId} 
+			]]> 
+			</when>
+			<otherwise>
+				<choose>
+					<when test="messageSearchForm.friendUserName != null and messageSearchForm.friendUserName != ''">
+						<choose>
+							<when test="(messageSearchForm.fromMessageDate != null and messageSearchForm.fromMessageDate != '') and (messageSearchForm.toMessageDate != null and messageSearchForm.toMessageDate != '')">
+								<choose>
+									<when test="messageSearchForm.messageContent != null and messageSearchForm.messageContent != ''">
+										<if test="isInBoxMessage == true">
+										<![CDATA[
+							    			and upper(b.USER_NAME) = #{messageSearchForm.friendUserNameUpperCase} 
+							    		]]> 
+							  			</if>
+							  			<if test="isInBoxMessage == false">
+							  			<![CDATA[
+							    			and upper(c.USER_NAME) = #{messageSearchForm.friendUserNameUpperCase} 
+							    		]]> 
+							  			</if>
+							  			<![CDATA[
+							  			and (cast(a.MESSAGE_TIME as DATE) between '${messageSearchForm.fromMessageDateStr}' and '${messageSearchForm.toMessageDateStr}') 
+							  			and upper(a.MESSAGE_CONTENT) like '%${messageSearchForm.messageContentUpperCase}%' 
+							  			]]> 
+									</when>
+									<otherwise>
+										<if test="isInBoxMessage == true">
+										<![CDATA[
+							    			and upper(b.USER_NAME) = #{messageSearchForm.friendUserNameUpperCase} 
+							    		]]>
+							  			</if>
+							  			<if test="isInBoxMessage == false">
+							  			<![CDATA[
+							    			and upper(c.USER_NAME) = #{messageSearchForm.friendUserNameUpperCase} 
+							    		]]>
+							  			</if>
+							  			<![CDATA[
+							  			and (cast(a.MESSAGE_TIME as DATE) between '${messageSearchForm.fromMessageDateStr}' and '${messageSearchForm.toMessageDateStr}') 
+							  			]]>
+									</otherwise>
+								</choose>
+							</when>
+							<otherwise>
+								<if test="isInBoxMessage == true">
+								<![CDATA[
+					    			and upper(b.USER_NAME) = #{messageSearchForm.friendUserNameUpperCase} 
+					    		]]>
+					  			</if>
+					  			<if test="isInBoxMessage == false">
+					  			<![CDATA[
+					    			and upper(c.USER_NAME) = #{messageSearchForm.friendUserNameUpperCase} 
+					    		]]>
+					  			</if>
+							</otherwise>
+						</choose>
+					</when>
+					<when test="(messageSearchForm.fromMessageDate != null and messageSearchForm.fromMessageDate != '') and (messageSearchForm.toMessageDate != null and messageSearchForm.toMessageDate != '')">
+						<choose>
+							<when test="messageSearchForm.messageContent != null and messageSearchForm.messageContent != ''">
+							<![CDATA[
+					  			and (cast(a.MESSAGE_TIME as DATE) between '${messageSearchForm.fromMessageDateStr}' and '${messageSearchForm.toMessageDateStr}') 
+					  			and upper(a.MESSAGE_CONTENT) like '%${messageSearchForm.messageContentUpperCase}%' 
+					  		]]>
+							</when>
+							<otherwise>
+							<![CDATA[
+					  			and (cast(a.MESSAGE_TIME as DATE) between '${messageSearchForm.fromMessageDateStr}' and '${messageSearchForm.toMessageDateStr}') 
+					  		]]>
+							</otherwise>
+						</choose>
+					</when>
+					<when test="messageSearchForm.messageContent != null and messageSearchForm.messageContent != ''">
+					<![CDATA[
+						and upper(a.MESSAGE_CONTENT) like '%${messageSearchForm.messageContentUpperCase}%' 
+					]]>
+					</when>
+					<otherwise>
+					</otherwise>
+				</choose>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="getAllUnreadMessagesForAllUsers" resultMap="detailedUserMessageResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userMessageColumns"/>
+		<![CDATA[
+			from 
+				FORUM_MESSAGE a 
+				inner join FORUM_USER_PROFILE b on a.MESSAGE_SOURCE_USER_ID = b.USER_ID 
+				inner join FORUM_USER_PROFILE c on a.MESSAGE_DESTINATION_USER_ID = c.USER_ID 
+			where 
+				a.MESSAGE_READ_FLAG = 0 
+			order by a.MESSAGE_TIME desc
+		]]>
+	</select>
+</mapper>

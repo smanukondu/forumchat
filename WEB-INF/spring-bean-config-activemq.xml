@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:jms="http://www.springframework.org/schema/jms" 
+	xmlns:amq="http://activemq.apache.org/schema/core" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+		http://www.springframework.org/schema/jms 
+		http://www.springframework.org/schema/jms/spring-jms-3.0.xsd 
+		http://activemq.apache.org/schema/core 
+		http://activemq.apache.org/schema/core/activemq-core.xsd">
+	<!-- A connection to ActiveMQ -->
+	<bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory" 
+		p:brokerURL="tcp://localhost:61616" />
+	<!-- A cached connection to wrap the ActiveMQ connection -->
+	<bean id="cachedConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory" 
+		p:targetConnectionFactory-ref="amqConnectionFactory" 
+		p:sessionCacheSize="10" />
+	<!--<amq:broker useJmx="false" persistent="false">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="tcp://localhost:0"/>
+		</amq:transportConnectors>
+	</amq:broker>
+	<amq:connectionFactory id="jmsFactory" brokerURL="vm://localhost"/>-->
+	<!-- A destination in ActiveMQ -->
+	<bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg value="TOOL.DEFAULT" />
+	</bean>
+	<!-- A JmsTemplate instance that uses the cached connection and destination -->
+	<bean id="producerTemplate" class="org.springframework.jms.core.JmsTemplate" 
+		p:connectionFactory-ref="cachedConnectionFactory" 
+		p:defaultDestination-ref="destination" />
+	<bean id="simpleTestMessageProducer" class="com.wiz.jspforum.bizservice.logic.jms.amq.SimpleTestMessageProducer">
+		<property name="jmsTemplate" ref="producerTemplate" />
+	</bean>
+	<!-- A POJO that implements the JMS message listener -->
+	<bean id="simpleTestMessageListener" class="com.wiz.jspforum.bizservice.logic.jms.amq.SimpleTestMessageListener" />
+	<!-- The Spring message listener container configuration -->
+	<jms:listener-container container-type="default" connection-factory="cachedConnectionFactory" acknowledge="auto">
+		<jms:listener destination="TOOL.DEFAULT" ref="simpleTestMessageListener" method="onMessage" />
+	</jms:listener-container>
+</beans>

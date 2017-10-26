@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiz.jspforum.persistence.basic.data.myBatis.mapper.PostMapper">
+	<sql id="userPostColumns">
+		<![CDATA[
+			a.POST_ID as postId, 
+			a.POST_TOPIC as postTopic, 
+			a.POST_CONTENT as postContent, 
+			a.POST_ATTACHMENT_IMG as postAttachmentImage, 
+			a.POST_MARK as postMark, 
+			a.POST_COMMENT_NUM as postCommentNum, 
+			a.POST_LEVEL as postLevel, 
+			a.POST_TIME as postTime, 
+			a.POST_USER_ID, 
+			b.USER_ID as post_userId, 
+			b.USER_NAME as post_userName, 
+			b.USER_PASSWORD as post_userPassword, 
+			b.USER_ALIAS as post_userAlias, 
+			b.USER_EMAIL as post_userEmail, 
+			b.USER_TYPE as post_userType, 
+			b.USER_LEVEL as post_userLevel, 
+			b.USER_SIGNATURE as post_userSignature, 
+			b.USER_AVATAR_PIC as post_userAvatarPic, 
+			b.USER_REGISTER_DATE as post_userRegisterDate, 
+			b.USER_LOGIN_STATUS as post_userLoginStatus, 
+			c.POST_COMMENT_ID as postCommentId, 
+			c.POST_COMMENT_CONTENT as postCommentContent, 
+			c.POST_COMMENT_DATE as postCommentDate, 
+			c.POST_COMMENT_MARK as postCommentMark, 
+			c.POST_COMMENT_POST_ID as postCommentPostId, 
+			c.POST_COMMENT_USER_ID, 
+			d.USER_ID as postComment_userId, 
+			d.USER_NAME as postComment_userName, 
+			d.USER_PASSWORD as postComment_userPassword, 
+			d.USER_ALIAS as postComment_userAlias, 
+			d.USER_EMAIL as postComment_userEmail, 
+			d.USER_TYPE as postComment_userType, 
+			d.USER_LEVEL as postComment_userLevel, 
+			d.USER_SIGNATURE as postComment_userSignature, 
+			d.USER_AVATAR_PIC as postComment_userAvatarPic, 
+			d.USER_REGISTER_DATE as postComment_userRegisterDate, 
+			d.USER_LOGIN_STATUS as postComment_userLoginStatus 
+		]]>
+	</sql>
+	<resultMap id="detailedUserPostResultMap" type="UserPost">
+		<id property="postId" column="postId"/>
+		<result property="postTopic" column="postTopic"/>
+		<result property="postContent" column="postContent"/>
+		<result property="postAttachmentImage" column="postAttachmentImage"/>
+		<result property="postMark" column="postMark"/>
+		<result property="postCommentNum" column="postCommentNum"/>
+		<result property="postLevel" column="postLevel"/>
+		<result property="postTime" column="postTime"/>
+		<association property="postUser" javaType="UserProfile" 
+			resultMap="com.wiz.jspforum.persistence.basic.data.myBatis.mapper.UserMapper.detailedUserProfileResultMap" 
+			columnPrefix="post_"/>
+		<collection property="postCommentList" ofType="PostComment" javaType="ArrayList" column="postId">
+			<id property="postCommentId" column="postCommentId"/>
+			<result property="postCommentContent" column="postCommentContent"/>
+			<result property="postCommentDate" column="postCommentDate"/>
+			<result property="postCommentMark" column="postCommentMark"/>
+			<result property="postCommentPostId" column="postCommentPostId"/>
+			<association property="postCommentUser" javaType="UserProfile" 
+				resultMap="com.wiz.jspforum.persistence.basic.data.myBatis.mapper.UserMapper.detailedUserProfileResultMap" 
+				columnPrefix="postComment_"/>
+		</collection>
+	</resultMap>
+	<select id="getUserPostRecordsForAllOrderByPostTimeDesc" resultMap="detailedUserPostResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userPostColumns"/>
+		<![CDATA[
+			from 
+				FORUM_POST a 
+				inner join FORUM_USER_PROFILE b on a.POST_USER_ID = b.USER_ID 
+				left join FORUM_POST_COMMENT c on a.POST_ID = c.POST_COMMENT_POST_ID 
+				left join FORUM_USER_PROFILE d on c.POST_COMMENT_USER_ID = d.USER_ID 
+			order by 
+				a.POST_TIME desc
+		]]>
+	</select>
+	<select id="getUserPostRecordByPostId" parameterType="int" resultMap="detailedUserPostResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userPostColumns"/>
+		<![CDATA[
+			from 
+				FORUM_POST a 
+				inner join FORUM_USER_PROFILE b on a.POST_USER_ID = b.USER_ID 
+				left join FORUM_POST_COMMENT c on a.POST_ID = c.POST_COMMENT_POST_ID 
+				left join FORUM_USER_PROFILE d on c.POST_COMMENT_USER_ID = d.USER_ID 
+			where 
+				a.POST_ID = #{postId}
+		]]>
+	</select>
+	<insert id="insertUserPostRecord" parameterType="UserPost">
+		<![CDATA[
+			insert into FORUM_POST 
+				(POST_TOPIC, 
+				 POST_CONTENT, 
+				 POST_ATTACHMENT_IMG, 
+				 POST_MARK, 
+				 POST_COMMENT_NUM, 
+				 POST_LEVEL, 
+				 POST_USER_ID, 
+				 POST_TIME) 
+			values 
+				(#{postTopic}, 
+				 #{postContent}, 
+				 #{postAttachmentImage}, 
+				 #{postMark}, 
+				 #{postCommentNum}, 
+				 #{postLevel}, 
+				 #{postUser.userId}, 
+				 CURRENT_TIMESTAMP) 
+		]]>
+	</insert>
+	<insert id="insertPostCommentRecord" parameterType="PostComment">
+		<![CDATA[
+			insert into FORUM_POST_COMMENT 
+				(POST_COMMENT_POST_ID, 
+				 POST_COMMENT_CONTENT, 
+				 POST_COMMENT_USER_ID, 
+				 POST_COMMENT_DATE, 
+				 POST_COMMENT_MARK) 
+			values 
+				(#{postCommentPostId}, 
+				 #{postCommentContent}, 
+				 #{postCommentUser.userId}, 
+				 #{postCommentDate}, 
+				 #{postCommentMark}) 
+		]]>
+	</insert>
+	<update id="updateUserPostRecordForPostMark" parameterType="UserPost">
+		<![CDATA[
+			update FORUM_POST set 
+				POST_MARK_1 = #{postMark} 
+			where 
+				POST_ID = #{postId} 
+		]]>
+	</update>
+	<update id="updateUserPostRecordForPostCommentTimes" parameterType="UserPost">
+		<![CDATA[
+			update FORUM_POST set 
+				POST_COMMENT_NUM = #{postCommentNum} 
+			where 
+				POST_ID = #{postId} 
+		]]>
+	</update>
+	<select id="getUserPostRecordsFromFriends" parameterType="int" resultMap="detailedUserPostResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userPostColumns"/>
+		<![CDATA[
+			from 
+				FORUM_POST a 
+				inner join FORUM_USER_PROFILE b on a.POST_USER_ID = b.USER_ID 
+				left join FORUM_POST_COMMENT c on a.POST_ID = c.POST_COMMENT_POST_ID 
+				left join FORUM_USER_PROFILE d on c.POST_COMMENT_USER_ID = d.USER_ID 
+			where 
+				a.POST_USER_ID in (select friend.FRIEND_LINK_CUST_USER_ID 
+					from FORUM_USER_PROFILE user inner join FORUM_FRIEND_LINK friend on user.USER_ID = friend.FRIEND_LINK_HOST_USER_ID 
+					where user.USER_ID = #{userId}) 
+		]]>
+	</select>
+	<select id="getUserPostRecordsFromMine" parameterType="int" resultMap="detailedUserPostResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userPostColumns"/>
+		<![CDATA[
+			from 
+				FORUM_POST a 
+				inner join FORUM_USER_PROFILE b on a.POST_USER_ID = b.USER_ID 
+				left join FORUM_POST_COMMENT c on a.POST_ID = c.POST_COMMENT_POST_ID 
+				left join FORUM_USER_PROFILE d on c.POST_COMMENT_USER_ID = d.USER_ID 
+			where 
+				a.POST_USER_ID = #{userId} 
+		]]>
+	</select>
+	<select id="getUserPostRecordsWithConditions" resultMap="detailedUserPostResultMap">
+		<![CDATA[
+			select 
+		]]>
+			<include refid="userPostColumns"/>
+		<![CDATA[
+			from 
+				FORUM_POST a 
+				inner join FORUM_USER_PROFILE b on a.POST_USER_ID = b.USER_ID 
+				left join FORUM_POST_COMMENT c on a.POST_ID = c.POST_COMMENT_POST_ID 
+				left join FORUM_USER_PROFILE d on c.POST_COMMENT_USER_ID = d.USER_ID 
+			where 
+		]]>
+		<choose>
+			<when test="postSearchForm.postId != 0">
+			<![CDATA[
+			a.POST_ID = #{postSearchForm.postId} 
+			]]>
+			</when>
+			<otherwise>
+				<choose>
+					<when test="postSearchForm.postUserName != null and postSearchForm.postUserName != ''">
+						<choose>
+							<when test="(postSearchForm.fromPostDate != null and postSearchForm.fromPostDate != '') and (postSearchForm.toPostDate != null and postSearchForm.toPostDate != '')">
+								<choose>
+									<when test="postSearchForm.postTitle != null and postSearchForm.postTitle != ''">
+										<![CDATA[
+							    		upper(b.USER_NAME) = #{postSearchForm.postUserNameUpperCase} 
+							  			and (cast(a.POST_TIME as DATE) between '${postSearchForm.fromPostDateStr}' and '${postSearchForm.toPostDateStr}') 
+							  			and upper(a.POST_TOPIC) like '%${postSearchForm.postTitleUpperCase}%' 
+							  			]]> 
+									</when>
+									<otherwise>
+							  			<![CDATA[
+							  			upper(b.USER_NAME) = #{postSearchForm.postUserNameUpperCase} 
+							  			and (cast(a.POST_TIME as DATE) between '${postSearchForm.fromPostDateStr}' and '${postSearchForm.toPostDateStr}') 
+							  			]]>
+									</otherwise>
+								</choose>
+							</when>
+							<otherwise>
+								<![CDATA[
+					    		upper(b.USER_NAME) = #{postSearchForm.postUserNameUpperCase} 
+					    		]]>
+							</otherwise>
+						</choose>
+					</when>
+					<when test="(postSearchForm.fromPostDate != null and postSearchForm.fromPostDate != '') and (postSearchForm.toPostDate != null and postSearchForm.toPostDate != '')">
+						<choose>
+							<when test="postSearchForm.postTitle != null and postSearchForm.postTitle != ''">
+							<![CDATA[
+					  		(cast(a.POST_TIME as DATE) between '${postSearchForm.fromPostDateStr}' and '${postSearchForm.toPostDateStr}') 
+							and upper(a.POST_TOPIC) like '%${postSearchForm.postTitleUpperCase}%' 
+					  		]]>
+							</when>
+							<otherwise>
+							<![CDATA[
+					  		(cast(a.POST_TIME as DATE) between '${postSearchForm.fromPostDateStr}' and '${postSearchForm.toPostDateStr}') 
+					  		]]>
+							</otherwise>
+						</choose>
+					</when>
+					<when test="postSearchForm.postTitle != null and postSearchForm.postTitle != ''">
+					<![CDATA[
+					upper(a.POST_TOPIC) like '%${postSearchForm.postTitleUpperCase}%' 
+					]]>
+					</when>
+					<otherwise>
+					</otherwise>
+				</choose>
+			</otherwise>
+		</choose>
+	</select>
+	
+</mapper>

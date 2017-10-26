@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.wiz.jspforum.persistence.basic.data.dto">
+	<class name="UserPost" table="FORUM_POST" lazy="false">
+		<cache usage="read-write"/>
+		<id name="postId" type="java.lang.Integer" column="POST_ID">
+			<generator class="native"/>
+		</id>
+		<property name="postTopic" type="java.lang.String" column="POST_TOPIC"/>
+		<property name="postContent" type="java.lang.String" column="POST_CONTENT"/>
+		<property name="postAttachmentImage" type="java.lang.String" column="POST_ATTACHMENT_IMG"/>
+		<property name="postMark" type="java.lang.Integer" column="POST_MARK"/>
+		<property name="postCommentNum" type="java.lang.Integer" column="POST_COMMENT_NUM"/>
+		<property name="postLevel" type="java.lang.Integer" column="POST_LEVEL" />
+		<property name="postTime" column="POST_TIME"/>
+		<many-to-one name="postUser" class="UserProfile" fetch="select">
+			<column name="POST_USER_ID" not-null="true"/>
+		</many-to-one>
+		<bag name="postCommentList" table="FORUM_POST_COMMENT" inverse="false" lazy="false" fetch="select">
+			<key>
+				<column name="POST_COMMENT_POST_ID" not-null="true"/>
+			</key>
+			<one-to-many class="PostComment"/>
+		</bag>
+	</class>
+</hibernate-mapping>
